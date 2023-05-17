@@ -13,8 +13,8 @@ def export():
     print(args)
     
     # 解析参数
-    root0 = request.form.get('root0', default='./pics/example6.jpg')
-    root1 = request.form.get('root1', default='./pics/example6.jpg')
+    root0 = request.form.get('root0', default='./pics/example2.jpg')
+    root1 = request.form.get('root1', default='./pics/example2.jpg')
     output = request.form.get('output', default='./pics/output.jpg')
     thresh_line = int(request.form.get('thresh_line', default='10'))
     thresh_box = int(request.form.get('thresh_box', default='160'))

@@ -3,8 +3,8 @@ import requests
 url = 'http://cn-yw-plc-2.openfrp.top:25000/export'  # 替换为服务器的实际IP地址和端口以及路径
 
 data = {
-    'root0': './pics/example6.jpg',  # 根据实际参数进行替换
-    'root1': './pics/example6.jpg',
+    'root0': './pics/example2.jpg',  # 根据实际参数进行替换
+    'root1': './pics/example2.jpg',
     'output': './pics/output.jpg',
     'thresh_line': '10',
     'thresh_box': '160',
