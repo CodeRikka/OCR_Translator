@@ -36,7 +36,7 @@ usage: python export.py [-r0 ROOT_0] [-r1 ROOT_1] [-o OUTPUT_PATH]
                         [-g GPU{True, False}] [-rs RESIZE{True, False}]
                         [-d DEWARP{True, False}]
 positional arguments: [-r0 ROOT_0] [-r1 ROOT_1] [-o OUTPUT_PATH]
-use Page-Dewarp: python [arguments] -d True
+use Page-Dewarp: python export.py [arguments] -d True
 ```
 
 ### Enable Server
