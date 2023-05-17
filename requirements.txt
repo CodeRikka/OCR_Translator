@@ -1,0 +1,13 @@
+# Default
+numpy
+matplotlib
+scipy
+sympy
+tomlkit
+toml
+easyocr==1.6.2
+
+# Verified version
+opencv-contrib-python==4.5.4.60
+opencv-python==4.5.4.60
+opencv-python-headless==4.5.4.60
