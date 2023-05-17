@@ -9,6 +9,3 @@ def process(image_path):
     image_name_without_extension = os.path.splitext(image_name)[0]
     new_image_name = image_name_without_extension + '_thresh.png'
     return new_image_name
-    
-if __name__ == "__main__":
-    process('pics/output.jpg')
