@@ -5,6 +5,7 @@ scipy
 sympy
 tomlkit
 toml
+Flask
 easyocr==1.6.2
 page-dewarp
 
