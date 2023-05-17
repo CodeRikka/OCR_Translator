@@ -11,10 +11,9 @@ executor = ThreadPoolExecutor(max_workers=10)  # 设置线程池的最大工作�
 def export():
     args = request.form.to_dict()
 
-    # 解析参数...
     # 解析参数
-    root0 = request.form.get('root0', default='E:/Code/python/ocr/pics/example6.jpg')
-    root1 = request.form.get('root1', default='E:/Code/python/ocr/pics/example6.jpg')
+    root0 = request.form.get('root0', default='./pics/example6.jpg')
+    root1 = request.form.get('root1', default='./pics/example6.jpg')
     output = request.form.get('output', default='./pics/output.jpg')
     thresh_line = int(request.form.get('thresh_line', default='10'))
     thresh_box = int(request.form.get('thresh_box', default='160'))
