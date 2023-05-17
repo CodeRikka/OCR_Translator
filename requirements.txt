@@ -6,10 +6,12 @@ sympy
 tomlkit
 toml
 Flask
-easyocr==1.6.2
 page-dewarp
 
 # Verified version
 opencv-contrib-python==4.5.4.60
 opencv-python==4.5.4.60
 opencv-python-headless==4.5.4.60
+
+# EasyOCR
+easyocr==1.6.2
