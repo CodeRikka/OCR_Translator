@@ -38,9 +38,10 @@ def export():
         resize=resize,
         dewarp=dewarp
     )
+    print(args)
     # 使用线程池执行耗时任务
-    executor.submit(main, args=args)
-
+    future = executor.submit(main, args=args)
+    future.result()
     return 'Export started'
 
 
