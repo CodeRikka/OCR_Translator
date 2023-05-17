@@ -18,6 +18,7 @@ Step2. Verify Page-Dewarp
 page-dewarp -x 0 -y 0 pics/example6.jpg
 ```
 Step3. GPU acceleration
+
 If you wish to use GPU acceleration, please install the GPU version of torch and related packages. Check the [Pytorch official website](https://pytorch.org/) for tutorials.
 ```
 pip uninstall torch torchvision torchaudio
