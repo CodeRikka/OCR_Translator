@@ -25,6 +25,10 @@ pip uninstall torch torchvision torchaudio
 # Modify the cuda version to your own version
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
 ```
+Step4. Download Golang related packages (optional)
+```
+go get github.com/gin-gonic/gin
+```
 ### Run locally
 
 #### Usage
@@ -66,7 +70,7 @@ make sure you are using the correct port
 
 #### 1. Send a request to the server using code
 ```
-python POST.py
+python posts/py_POST.py
 ```
 
 #### 2. Send a request to the server using cmd
