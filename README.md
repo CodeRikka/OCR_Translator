@@ -35,8 +35,14 @@ usage: python export.py [-r0 ROOT_0] [-r1 ROOT_1] [-o OUTPUT_PATH]
                         [--uid UID] [--bkey BKEY]
                         [-g GPU{True, False}] [-rs RESIZE{True, False}]
                         [-d DEWARP{True, False}]
+                        [-m MODEL{0,1,2}] # updated on 23.05.18
 positional arguments: [-r0 ROOT_0] [-r1 ROOT_1] [-o OUTPUT_PATH]
 use Page-Dewarp: python export.py [arguments] -d True
+select model: [-m MODEL{0,1,2}] # using ML methods
+              0: Default
+              1: KMeans
+              2: AgglomerativeClustering
+              **These methods are still being tested**
 ```
 
 ### Enable Server

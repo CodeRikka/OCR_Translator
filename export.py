@@ -265,9 +265,12 @@ class OCR(object):
         if self.args.resize:
             self.img = self.resize_img(img=self.img, scale_persent=self.scale)
             self.draw_img = self.resize_img(img=self.draw_img, scale_persent=self.scale)
-        # self.get_kmeans(2)
-        # self.get_agglomerative()
-        self.get_default()
+        if self.args.model == 0:
+            self.get_default()
+        elif self.args.model == 1:
+            self.get_kmeans(2)
+        else:
+            self.get_agglomerative()
         self.sort_paragraph()
         self.merge()
         self.draw_mask()

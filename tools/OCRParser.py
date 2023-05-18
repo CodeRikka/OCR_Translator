@@ -73,4 +73,10 @@ def makeparse():
         type=bool,
         default=False,
     )
+    parser.add_argument(
+        "-m",
+        "--model",
+        type=int,
+        default=0,
+    )
     return parser

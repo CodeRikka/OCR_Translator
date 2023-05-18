@@ -24,6 +24,7 @@ def export():
     gpu = request.form.get('gpu', default='True').lower() == 'true'
     resize = request.form.get('resize', default='True').lower() == 'true'
     dewarp = request.form.get('dewarp', default='False').lower() == 'true'
+    model = int(request.form.get('model', default='0'))
     args = argparse.Namespace(
         root0=root0,
         root1=root1,
@@ -36,7 +37,8 @@ def export():
         bkey=bkey,
         gpu=gpu,
         resize=resize,
-        dewarp=dewarp
+        dewarp=dewarp,
+        model=model,
     )
     print(args)
     # 使用线程池执行耗时任务
