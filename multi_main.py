@@ -16,7 +16,7 @@ def export():
     root1 = request.form.get('root1', default='./pics/example2.jpg')
     output = request.form.get('output', default='./pics/output.jpg')
     thresh_line = int(request.form.get('thresh_line', default='10'))
-    thresh_box = int(request.form.get('thresh_box', default='160'))
+    thresh_box = int(request.form.get('thresh_box', default='80'))
     extra_size = int(request.form.get('extra_size', default='20'))
     font_size = int(request.form.get('font_size', default='35'))
     uid = request.form.get('uid', default='20220630001260579')

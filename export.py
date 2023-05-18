@@ -1,15 +1,18 @@
 import easyocr
 import cv2
 import numpy as np
-from baidu_translate import baiduTranslate
+from tools.baidu_translate import baiduTranslate
 from PIL import Image, ImageDraw, ImageFont
-from OCRParser import makeparse
-    
+from tools.OCRParser import makeparse
+
+from sklearn.cluster import KMeans ,AgglomerativeClustering
+from sklearn.preprocessing import MinMaxScaler
+
 class OCR(object):
     def __init__(self, args):
         self.args = args
         if self.args.dewarp:
-            from dewarp import process
+            from tools.dewarp import process
             self.args.root1 = self.args.root0 = process(self.args.root0)
         self.img = cv2.imread(self.args.root0)
         self.draw_img = cv2.imread(self.args.root1)
@@ -17,9 +20,8 @@ class OCR(object):
             self.scale = 2160 / self.img.shape[1]
         self.baidu_translate = baiduTranslate(args.uid, args.bkey)
         self.reader = easyocr.Reader(['en'], gpu=args.gpu)
-        self.answer, self.fa = [], []
-        self.center, self.range, self.root = [], [], []
-        self.text_line = [] # also the final text
+        self.range = []
+        # self.text_in_paragraphs
     
     def resize_img(self, img, scale_persent):
         original_height, original_width = img.shape[:2]
@@ -30,111 +32,156 @@ class OCR(object):
         enlarged_image = cv2.resize(img, new_dim, interpolation=cv2.INTER_LINEAR)
         return enlarged_image
     
-    def get_text(self):
+    def get_default(self):
         gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
         pre_result = self.reader.readtext(gray)
         
+        # 按照文本框的中心点的横坐标进行排序
+        sorted_pre_result = sorted(pre_result, key=lambda box: (box[0][0][1] + box[0][2][1]) / 2)
+
+        split_threshold = self.args.thresh_box  # 根据实际情况调整
+
+        self.paragraphs = [[]]  # 初始化段落列表
+        current_paragraph = self.paragraphs[0]
+
+        for box in sorted_pre_result:
+            if len(current_paragraph) == 0:
+                current_paragraph.append(box)
+            else:
+                prev_box = current_paragraph[-1]
+                center_diff = abs(prev_box[0][0][1] + prev_box[0][2][1] - box[0][0][1] - box[0][2][1]) / 2
+                if center_diff > split_threshold:
+                    current_paragraph = [box]
+                    self.paragraphs.append(current_paragraph)
+                else:
+                    current_paragraph.append(box)
+        print(len(self.paragraphs))
+    
+    def get_kmeans(self, clusters):
+        # 读取图片并进行灰度处理
+        gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
+
+        # 使用OCR识别文本框，并提取位置信息
+        pre_result = self.reader.readtext(gray)
         pre_centers = []
         for box in pre_result:
             x1, y1 = box[0][0][0], box[0][0][1]
             x2, y2 = box[0][2][0], box[0][2][1]
-            center = ((x1 + x2) / 2, (y1 + y2) / 2)
+            center = [(x1 + x2) / 2, (y1 + y2) / 2]
             pre_centers.append(center)
 
-        # 对文本框按照中心点的位置进行排序
-        # sorted_indices = np.argsort([c[0] for c in centers])
-        sorted_indices = np.lexsort((np.array([c[0] for c in pre_centers]), np.array([c[1] for c in pre_centers])))
-        print(sorted_indices)
-        sorted_boxes = [pre_result[i] for i in sorted_indices]
+        # 将位置信息转换为聚类算法的输入格式
+        X = np.array(pre_centers)
+        scaler = MinMaxScaler()
+        X_normalized = scaler.fit_transform(X)
+        print(X_normalized)
         
-        line, texts = [], []
-        lstx, lsty = 0, 0
-        for i, box in enumerate(sorted_boxes):
+        # 聚类算法
+        kmeans = KMeans(n_clusters=clusters, random_state=0).fit(X_normalized)
+
+        # 获取聚类结果，每个类别对应一个段落
+        labels = kmeans.labels_
+        self.paragraphs = [[] for _ in range(clusters)]
+        for i in range(len(labels)):
+            self.paragraphs[labels[i]].append(pre_result[i])
+    
+    def get_agglomerative(self):
+        gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
+        # 生成样本数据，每个样本是一个文本框的位置信息
+        pre_result = self.reader.readtext(gray)
+        pre_centers = []
+        for box in pre_result:
             x1, y1 = box[0][0][0], box[0][0][1]
             x2, y2 = box[0][2][0], box[0][2][1]
-            cx, cy = (x1 + x2) / 2, (y1 + y2) / 2
+            center = [(x1 + x2) / 2, (y1 + y2) / 2]
+            pre_centers.append(center)
+
+        # 将位置信息转换为聚类算法的输入格式
+        X = np.array(pre_centers)
+        # 归一化
+        scaler = MinMaxScaler()
+        X_normalized = scaler.fit_transform(X)
+        print(X_normalized)
+
+        # 聚类算法
+        agg_clustering = AgglomerativeClustering(n_clusters=None, distance_threshold=3.0, linkage='ward')
+        labels = agg_clustering.fit_predict(X_normalized)
+
+        # 获取聚类结果，每个类别对应一个段落
+        n_clusters = len(set(labels))
+        self.paragraphs = [[] for _ in range(n_clusters)]
+        for i in range(len(labels)):
+            self.paragraphs[labels[i]].append(pre_result[i])
+
+        print(len(self.paragraphs))
+    
+    def sort_boxes(self, paragraph):
+        pre_centers = []
+        for box in paragraph:
+            x1, y1 = box[0][0][0], box[0][0][1]
+            x2, y2 = box[0][2][0], box[0][2][1]
+            center = [(x1 + x2) / 2, (y1 + y2) / 2]
+            pre_centers.append(center)
+        
+        # 对一个paragraph内的box进行从上到下，从左到右的排序
+        sorted_paragraph = [x for _, x in sorted(zip(pre_centers, paragraph), key=lambda pair: (pair[0][1], pair[0][0]))]
+        
+        return sorted_paragraph
+    
+    def sort_paragraph(self):
+        for i, paragraph in enumerate(self.paragraphs):
+            self.paragraphs[i] = self.sort_boxes(paragraph)
+        print(self.paragraphs)
+    
+    def merge_text(self, paragraph):
+        def sort_line(line):
+            sorted_line = sorted(line, key=lambda box: box[0][0][0])  # 按照盒子的左边界位置进行排序
+            return sorted_line
+        line = []
+        lsty = -100
+        text = " "
+        for box in paragraph:
+            y1, y2 = box[0][0][1], box[0][2][1]
+            cy = (y1 + y2) /2
             if(abs(lsty-cy) > self.args.thresh_line):
                 if len(line) != 0:
-                    texts.append(line)
+                    line = sort_line(line)
+                    words = [box[1] for box in line]
+                    joined_words = " ".join(words)
+                    text = text + joined_words + " "
                 line = []
-                line.append(i)
-            else:
-                line.append(i)
-            lstx, lsty = cx, cy
-        
+            line.append(box)
+            lsty = cy
         if len(line) != 0:
-            texts.append(line)
+            line = sort_line(line)
+            words = [box[1] for box in line]
+            joined_words = " ".join(words)
+            text = text + joined_words + " "
+        print(text)
+        return text
+    
+    def merge(self):
+        
+        self.text = []
+        for paragraph in self.paragraphs:
+            min_x, min_y = float('inf'), float('inf')
+            max_x, max_y = float('-inf'), float('-inf')
+            paragraph_text = self.merge_text(paragraph=paragraph)
+            for box in paragraph:
+                points = box[0]
+                for point in points:
+                    x, y = point
+                    min_x = min(min_x, x)
+                    min_y = min(min_y, y)
+                    max_x = max(max_x, x)
+                    max_y = max(max_y, y)
             
-        for line in texts:
-            sorted_line = [sorted_boxes[i]
-                        for i in sorted(line, key=lambda x: sorted_boxes[x][0][0][0])]
-            # print(sorted_line)
-            self.answer.append(sorted_line)
+            self.range.append((min_x, min_y, max_x, max_y))
+            self.text.append(paragraph_text)
+        print(self.text)
+        print(self.range)
     
-    def draw_raw(self, img):
-        # 在原图上绘制排序后的文本框
-        cnt = 0
-        for j in self.answer:
-            sorted_line = j
-            for i, box in enumerate(sorted_line):
-                x1, y1 = box[0][0][0], box[0][0][1]
-                x2, y2 = box[0][2][0], box[0][2][1]
-                x1, y1 = int(x1), int(y1)
-                x2, y2 = int(x2), int(y2)
-                cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                cv2.putText(img, str(cnt) + " " + box[1], (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
-                cnt = cnt+1
-        
-        return img
     
-    def getfa(self, x):
-        if x != self.fa[x]:
-            self.fa[x] = self.getfa(self.fa[x])
-        return self.fa[x]
-    
-    def get_roots(self):
-        self.fa = [i for i in range(len(self.answer))]
-        
-        def getfa(x):
-            if x != self.fa[x]:
-                self.fa[x] = getfa(self.fa[x])
-            return self.fa[x]
-        
-        for sorted_line in self.answer:
-            minx1, miny1, maxx2, maxy2 = int(1e9), int(1e9), 0, 0
-            for box in sorted_line:
-                minx1, miny1 = min(minx1,box[0][0][0]), min(miny1,box[0][0][1])
-                maxx2, maxy2 = max(maxx2,box[0][2][0]), max(maxy2,box[0][2][1])
-                
-                maxx2, miny1 = max(maxx2,box[0][1][0]), min(miny1,box[0][1][1])
-                minx1, maxy2 = min(minx1,box[0][3][0]), max(maxy2,box[0][3][1])
-                
-            self.center.append((miny1 + maxy2)/2)
-            self.range.append((minx1, miny1, maxx2, maxy2))
-        
-        def merge(A, B):
-            faA = getfa(B)
-            faB = getfa(A)
-            if faA != faB:
-                self.fa[faA] = faB
-                x1 = min(self.range[faA][0], self.range[faB][0])
-                y1 = min(self.range[faA][1], self.range[faB][1])
-                x2 = max(self.range[faA][2], self.range[faB][2])
-                y2 = max(self.range[faA][3], self.range[faB][3])
-                self.range[faB] = (x1, y1, x2, y2)
-            return
-        
-        for i, _ in enumerate(self.answer):
-            for j, _ in enumerate(self.answer):
-                if i == j:
-                    continue
-                if abs(self.center[i] - self.center[j]) < self.args.thresh_box:
-                    merge(i, j)
-        
-        for i, _ in enumerate(self.answer):
-            if getfa(i) == i:
-                self.root.append(i)
-        
     def mask(self, img, x1, y1, x2, y2):
         roi = img[y1:y2, x1:x2]
     
@@ -149,29 +196,13 @@ class OCR(object):
     def draw_mask(self):
         height, width, _ = self.draw_img.shape
 
-        # get mask
-        for i in self.root:
-            x1 = max(int(self.range[i][0]) - self.args.extra_size, 0)
-            y1 = max(int(self.range[i][1]) - self.args.extra_size, 0)
-            x2 = min(int(self.range[i][2]) + self.args.extra_size, width)
-            y2 = min(int(self.range[i][3]) + self.args.extra_size, height)
+        for range in self.range:
+            x1, y1, x2, y2 = range
+            x1 = max(int(x1) - self.args.extra_size, 0)
+            y1 = max(int(y1) - self.args.extra_size, 0)
+            x2 = min(int(x2) + self.args.extra_size, width)
+            y2 = min(int(y2) + self.args.extra_size, height)
             self.draw_img = self.mask(self.draw_img, x1, y1, x2, y2)
-        
-    
-    def join_texts(self):
-        self.text_line = []
-        for _, line in enumerate(self.answer):
-            str_list = []
-            for _, box in enumerate(line):
-                # print(box)
-                str_list.append(box[1])
-            self.text_line.append(" ".join(str_list))
-        
-        for i, line in enumerate(self.answer):
-            fai = self.getfa(i)
-            if fai == i:
-                continue
-            self.text_line[fai] = self.text_line[fai] + " " + self.text_line[i]
     
     def put_texts(self):
         img = Image.fromarray(self.draw_img)
@@ -182,19 +213,19 @@ class OCR(object):
         draw = ImageDraw.Draw(img_copy)
 
         # 指定字体文件和字体大小（根据需要更改）
-        font_file = "SimHei.ttf"
-        font_size = 35
+        font_file = "./src/SimHei.ttf"
+        font_size = self.args.font_size
         if self.args.resize:
             if self.scale > 1.0:
                 font_size = int(font_size * self.scale)
         font = ImageFont.truetype(font_file, font_size, encoding="utf-8")
 
-        for i in self.root:
+        for i in range(len(self.paragraphs)):
             x1 = int(self.range[i][0])
             y1 = int(self.range[i][1])
             x2 = int(self.range[i][2])
             y2 = int(self.range[i][3])
-            eng_text = self.text_line[i]
+            eng_text = self.text[i]
             cn_text = self.baidu_translate.translate(eng_text)
             # 在指定区域内绘制中文文本
             
@@ -234,11 +265,14 @@ class OCR(object):
         if self.args.resize:
             self.img = self.resize_img(img=self.img, scale_persent=self.scale)
             self.draw_img = self.resize_img(img=self.draw_img, scale_persent=self.scale)
-        self.get_text()
-        self.get_roots()
+        # self.get_kmeans(2)
+        # self.get_agglomerative()
+        self.get_default()
+        self.sort_paragraph()
+        self.merge()
         self.draw_mask()
-        self.join_texts()
         self.put_texts()
+        
         if self.args.resize:
             self.draw_img = self.resize_img(img=self.draw_img, scale_persent=1.0/self.scale)
         cv2.imwrite(self.args.output, self.draw_img)
