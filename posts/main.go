@@ -88,7 +88,7 @@ func main() {
 
 		// 上传文件至指定目录
 		filename, _ := Rename(file.Filename)
-		filePath := "E:/Code/Go/test/img/" + filename
+		filePath := "./img/" + filename
 		fmt.Println("filePath = " + filePath)
 		err := c.SaveUploadedFile(file, filePath)
 		if err != nil {
@@ -96,11 +96,11 @@ func main() {
 			c.String(http.StatusInternalServerError, "文件上传失败")
 			return
 		}
-		err = SolvePOST("http://cn-yw-plc-2.openfrp.top:25000/export", filePath, filePath, "10", "160", "E:/img/output_"+filename)
+		err = SolvePOST("http://cn-yw-plc-2.openfrp.top:25000/export", filePath, filePath, "10", "160", "./img/output_"+filename)
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("发送POST请求失败：%s", err.Error()))
 		}
-		c.File("E:/img/output_" + filename)
+		c.File("./img/output_" + filename)
 		c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
 	})
 	router.Run(":15565")
