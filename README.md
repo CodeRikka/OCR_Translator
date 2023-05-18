@@ -66,7 +66,7 @@ make sure you are using the correct port
 
 #### 1. Send a request to the server using code
 ```
-python POST.py
+python posts/py_POST.py
 ```
 
 #### 2. Send a request to the server using cmd
