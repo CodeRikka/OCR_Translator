@@ -36,24 +36,28 @@ usage: python export.py [-r0 ROOT_0] [-r1 ROOT_1] [-o OUTPUT_PATH]
                         [-g GPU{True, False}] [-rs RESIZE{True, False}]
                         [-d DEWARP{True, False}]
                         [-m MODEL{0,1,2}] # updated on 23.05.18
+
 positional arguments: [-r0 ROOT_0] [-r1 ROOT_1] [-o OUTPUT_PATH]
+
 use Page-Dewarp: python export.py [arguments] -d True
-select model: [-m MODEL{0,1,2}] # using ML methods
-              0: Default
-              1: KMeans
-              2: AgglomerativeClustering
-              **These methods are still being tested**
+
+select ML model: [-m MODEL{0,1,2}] # using ML methods
+                 0: Default
+                 1: KMeans
+                 2: AgglomerativeClustering
+                 **These methods are still being tested**
+                 **See export.py for further information**
 ```
 
 ### Enable Server
 
 #### 1. Enable single threading on the local server
 ```
-python main.py
+python single_thread.py
 ```
 #### 2. Enable multithreading on the local server
 ```
-python multi_main.py
+python multi_thread.py
 ```
 
 ### Apply
