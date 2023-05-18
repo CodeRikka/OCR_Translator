@@ -1,1 +1,7 @@
+# Python
 **/__pycache__/
+
+# Golang
+**/img/
+*.mod
+*.sum
