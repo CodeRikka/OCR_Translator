@@ -1,5 +1,9 @@
 ## OCR_Translator
 
+### UPDATE
+```
+2023.5.19 11:19     added spellchecker (pyenchant methods)
+```
 ### Introduction
 
 This project uses [EasyOCR](https://github.com/JaidedAI/EasyOCR), [Page-Dewarp](https://github.com/lmmx/page-dewarp), and Baidu Translator for implementation, aiming to learn the encapsulation and deployment of APIs on servers
