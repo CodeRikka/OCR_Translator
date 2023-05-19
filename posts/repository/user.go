@@ -2,16 +2,14 @@ package repository
 
 import (
 	"sync"
-	"time"
 
 	"gorm.io/gorm"
 )
 
 type User struct {
-	Id         int64     `gorm:"column:id"`
-	Name       string    `gorm:"column:name"`
-	CreateTime time.Time `gorm:"column:create_time"`
-	ModifyTime time.Time `gorm:"column:modify_time"`
+	gorm.Model
+	Name  string `gorm:"column:name, not null, unique"`
+	Email string `gorm:"column:email, not null"`
 }
 
 func (User) TableName() string {
@@ -43,3 +41,7 @@ func (*UserDao) QueryUserById(id int64) (*User, error) {
 	}
 	return &user, nil
 }
+
+// func CreateUser(email string, userName string, password string) (*User, error) {
+
+// }

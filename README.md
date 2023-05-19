@@ -8,6 +8,10 @@
 
 This project uses [EasyOCR](https://github.com/JaidedAI/EasyOCR), [Page-Dewarp](https://github.com/lmmx/page-dewarp), and Baidu Translator for implementation, aiming to learn the encapsulation and deployment of APIs on servers
 
+#### Examples
+
+![examples.png](https://s2.loli.net/2023/05/19/9ohKxbZRy2d8icf.png)
+
 ### Installation
 
 #### Installing on the host machine
