@@ -7,13 +7,13 @@ def makeparse():
         "-r0",
         "--root0",
         type=str,
-        default="./pics/example2.jpg",
+        default="./pics/example4.jpg",
     )
     parser.add_argument(
         "-r1",
         "--root1",
         type=str,
-        default="./pics/example2.jpg",
+        default="./pics/example4.jpg",
     )
     parser.add_argument(
         "-o",
