@@ -31,7 +31,7 @@ def makeparse():
         "-tb",
         "--thresh_box",
         type=int,
-        default=80,
+        default=120,
     )
     parser.add_argument(
         "-e",

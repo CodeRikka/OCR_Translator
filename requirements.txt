@@ -16,3 +16,6 @@ opencv-python-headless==4.5.4.60
 
 # EasyOCR
 easyocr==1.6.2
+
+# SpellChecker
+pyenchant

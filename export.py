@@ -8,6 +8,8 @@ from tools.OCRParser import makeparse
 from sklearn.cluster import KMeans ,AgglomerativeClustering
 from sklearn.preprocessing import MinMaxScaler
 
+from tools.checker import correct_spelling
+
 class OCR(object):
     def __init__(self, args):
         self.args = args
@@ -226,6 +228,7 @@ class OCR(object):
             x2 = int(self.range[i][2])
             y2 = int(self.range[i][3])
             eng_text = self.text[i]
+            eng_text = correct_spelling(eng_text)
             cn_text = self.baidu_translate.translate(eng_text)
             # 在指定区域内绘制中文文本
             
