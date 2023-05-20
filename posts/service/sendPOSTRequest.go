@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/CodeRikka/OCR_Translator/posts/repository"
 )
 
 // 根据图片格式获得保存后的文件名
@@ -73,4 +75,9 @@ func SolvePOST(urlStr string, root0 string, root1 string, tl string, tb string, 
 	}
 	fmt.Println(string(response))
 	return nil
+}
+
+func SignupUser(user *repository.User) error {
+	err := repository.CreateUser(user)
+	return err
 }

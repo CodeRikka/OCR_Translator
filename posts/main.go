@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/CodeRikka/OCR_Translator/posts/handler"
@@ -25,12 +24,9 @@ func main() {
 		handler.Uploadimage(c)
 	})
 	router.POST("/signup", func(c *gin.Context) {
-		var user repository.User
-		err := c.BindJSON(&user)
-		if err != nil {
-			fmt.Println("绑定出错")
-		}
-		
+
+		handler.Signup(c)
+
 	})
 	router.POST("/login", func(c *gin.Context) {
 
