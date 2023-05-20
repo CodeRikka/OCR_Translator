@@ -5,7 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/CodeRikka/OCR_Translator/posts/service"
+	"main/service"
+
 	"github.com/gin-gonic/gin"
 )
 

@@ -8,8 +8,10 @@ import (
 
 type User struct {
 	gorm.Model
-	Name  string `gorm:"column:name, not null, unique"`
-	Email string `gorm:"column:email, not null"`
+	UserName    string `gorm:"column:name;not null"`
+	PhoneNumber string `gorm:"column:phone"`
+	OpenID      string `gnorm:"column:openid"`
+	Password    string `gnorm:"column:password"`
 }
 
 func (User) TableName() string {
@@ -42,6 +44,10 @@ func (*UserDao) QueryUserById(id int64) (*User, error) {
 	return &user, nil
 }
 
-// func CreateUser(email string, userName string, password string) (*User, error) {
-
-// }
+func CreateUser(user User) error {
+	db.Create(&user)
+	// fmt.Println("create")
+	// err := result.Error
+	// return err
+	return nil
+}
