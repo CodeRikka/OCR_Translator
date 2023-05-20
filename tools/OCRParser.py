@@ -78,5 +78,6 @@ def makeparse():
         "--model",
         type=int,
         default=0,
+        choices=[0,1,2],
     )
     return parser
