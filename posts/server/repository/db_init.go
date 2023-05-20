@@ -10,8 +10,8 @@ var db *gorm.DB
 
 func Init() error {
 	var err error
-	db, err := gorm.Open(mysql.New(mysql.Config{
-		DSN:               "root:root@tcp(127.0.0.1:3306)/community?charset=utf8mb4&parseTime=True&loc=Local",
+	db, err = gorm.Open(mysql.New(mysql.Config{
+		DSN:               "root:root@tcp(127.0.0.1:3306)/gorm_class?charset=utf8mb4&parseTime=True&loc=Local",
 		DefaultStringSize: 191,
 	}), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
@@ -21,6 +21,7 @@ func Init() error {
 	})
 	M := db.Migrator()
 	if M.HasTable(&User{}) {
+	} else {
 		M.CreateTable(&User{})
 	}
 
