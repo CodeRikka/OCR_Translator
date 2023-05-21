@@ -57,6 +57,7 @@ usage: python export.py [-r0 ROOT_0] [-r1 ROOT_1] [-o OUTPUT_PATH]
                         [-g GPU{True, False}] [-rs RESIZE{True, False}]
                         [-d DEWARP{True, False}]
                         [-m MODEL{0,1,2}] # updated on 23.05.18
+                        [--llama {True, False}] # updated on 23.05.21
 
 positional arguments: [-r0 ROOT_0] [-r1 ROOT_1] [-o OUTPUT_PATH]
 
@@ -68,6 +69,9 @@ select ML model: [-m MODEL{0,1,2}] # using ML methods
                  2: AgglomerativeClustering
                  **These methods are still being tested**
                  **See export.py for further information**
+
+use llama_correct: [--llama True]
+                   remember to start the vanilla-llama server before you use this method
 ```
 
 ### Enable Server
