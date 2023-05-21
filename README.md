@@ -3,10 +3,11 @@
 ### UPDATE
 ```
 2023.5.19 11:19     added spellchecker (pyenchant methods)
+2023.5.21 18:56     added llama_spellcheck ([vanilla-llama](https://github.com/galatolofederico/vanilla-llama))
 ```
 ### Introduction
 
-This project uses [EasyOCR](https://github.com/JaidedAI/EasyOCR), [Page-Dewarp](https://github.com/lmmx/page-dewarp), and Baidu Translator for implementation, aiming to learn the encapsulation and deployment of APIs on servers
+This project uses [EasyOCR](https://github.com/JaidedAI/EasyOCR), [Page-Dewarp](https://github.com/lmmx/page-dewarp), [Vanilla-llama](https://github.com/galatolofederico/vanilla-llama) and Baidu Translator for implementation, aiming to learn the encapsulation and deployment of APIs on servers
 
 #### Examples
 
@@ -38,6 +39,12 @@ Step4. Download Golang related packages
 go get github.com/gin-gonic/gin
 ```
 Step5. Modify the `filePath` and `outputPath` in the `main.go` to an absolute address(optional)
+```
+
+#### Install Vanilla-llama (Optional)
+
+See [Vanilla-llama](https://github.com/galatolofederico/vanilla-llama) for tutorial
+
 
 ### Run locally
 
