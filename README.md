@@ -39,7 +39,7 @@ Step4. Download Golang related packages
 go get github.com/gin-gonic/gin
 ```
 Step5. Modify the `filePath` and `outputPath` in the `main.go` to an absolute address(optional)
-```
+
 
 #### Install Vanilla-llama (Optional)
 
