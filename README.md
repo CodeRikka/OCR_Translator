@@ -39,6 +39,13 @@ go get github.com/gin-gonic/gin
 ```
 Step5. Modify the `filePath` and `outputPath` in the `main.go` to an absolute address(optional)
 
+Step5. Download nltk tokenizer
+```
+python
+>>> import nltk
+>>> nltk.download('punkt')
+```
+
 ### Run locally
 
 #### Usage
