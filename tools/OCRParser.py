@@ -80,4 +80,9 @@ def makeparse():
         default=0,
         choices=[0,1,2],
     )
+    parser.add_argument(
+        "--llama",
+        type=bool,
+        default=False,
+    )
     return parser
