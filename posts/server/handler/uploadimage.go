@@ -38,9 +38,10 @@ func Uploadimage(c *gin.Context) {
 		c.String(http.StatusInternalServerError, "文件上传失败")
 		return
 	}
-	err = service.SolvePOST("http://cn-yw-plc-2.openfrp.top:25000/export", filePath, filePath, THRESH_LINE, THRESH_BOX, FONT_SIZE, DEWARP, LLAMA, outputPath)
+	err = service.SolvePOST("http://127.0.0.1:25000/export", filePath, filePath, THRESH_LINE, THRESH_BOX, FONT_SIZE, DEWARP, LLAMA, outputPath)
 	if err != nil {
 		c.String(http.StatusInternalServerError, fmt.Sprintf("发送POST请求失败：%s", err.Error()))
+		return
 	}
 	c.File(outputPath)
 	c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
