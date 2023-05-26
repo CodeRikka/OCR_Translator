@@ -57,7 +57,7 @@ func SendPostRequest(urlStr string, postData map[string]string) ([]byte, error) 
 
 	return body, nil
 }
-func SolvePOST(urlStr string, root0 string, root1 string, tl string, tb string, font_size string, dewarp string, llama string, output string) error {
+func SolvePOST(urlStr, root0, root1, tl, tb, font_size, model, dewarp, llama, output string) error {
 	// 构造POST请求参数
 	postData := map[string]string{
 		"root0":       root0,
@@ -65,6 +65,7 @@ func SolvePOST(urlStr string, root0 string, root1 string, tl string, tb string, 
 		"thresh_line": tl,
 		"thresh_box":  tb,
 		"font_size":   font_size,
+		"model":       model,
 		"dewarp":      dewarp,
 		"llama":       llama,
 		"output":      output,
