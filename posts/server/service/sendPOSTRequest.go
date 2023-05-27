@@ -31,7 +31,7 @@ func SendPostRequest(urlStr string, postData map[string]string) ([]byte, error) 
 		formData.WriteString(fmt.Sprintf("%s=%s&", key, value))
 	}
 	formDataString := formData.String()
-
+	fmt.Println(formData)
 	// 创建HTTP请求
 	req, err := http.NewRequest("POST", urlStr, bytes.NewBufferString(formDataString))
 	if err != nil {
@@ -57,14 +57,18 @@ func SendPostRequest(urlStr string, postData map[string]string) ([]byte, error) 
 
 	return body, nil
 }
-func SolvePOST(urlStr string, root0 string, root1 string, tl string, tb string, output string) error {
+func SolvePOST(urlStr, root0, root1, tl, tb, font_size, model, dewarp, llama, output string) error {
 	// 构造POST请求参数
 	postData := map[string]string{
-		"root0":  root0,
-		"root1":  root1,
-		"tl":     tl,
-		"tb":     tb,
-		"output": output,
+		"root0":       root0,
+		"root1":       root1,
+		"thresh_line": tl,
+		"thresh_box":  tb,
+		"font_size":   font_size,
+		"model":       model,
+		"dewarp":      dewarp,
+		"llama":       llama,
+		"output":      output,
 	}
 	// 发送HTTP POST请求
 	response, err := SendPostRequest(urlStr, postData)

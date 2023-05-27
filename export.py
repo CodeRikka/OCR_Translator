@@ -243,7 +243,7 @@ class OCR(object):
             y2 = int(self.range[i][3])
             eng_text = self.text[i]
             # eng_text = correct_spelling(eng_text)
-            if args.llama and len(eng_text) > 20:
+            if self.args.llama and len(eng_text) > 20:
                 eng_text = self.llama_correct(eng_text)
             else:
                 eng_text = correct_spelling(eng_text)

@@ -25,6 +25,7 @@ def export():
     resize = request.form.get('resize', default='True').lower() == 'true'
     dewarp = request.form.get('dewarp', default='False').lower() == 'true'
     model = int(request.form.get('model', default='0'))
+    llama = request.form.get('llama', default='False').lower() == 'true'
     args = argparse.Namespace(
         root0=root0,
         root1=root1,
@@ -39,6 +40,7 @@ def export():
         resize=resize,
         dewarp=dewarp,
         model=model,
+        llama=llama,
     )
     print(args)
     # 使用线程池执行耗时任务
