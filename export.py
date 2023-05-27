@@ -207,18 +207,28 @@ class OCR(object):
             self.draw_img = self.mask(self.draw_img, x1, y1, x2, y2)
     
     def llama_correct(self, paragraph_text):
-        from tools.sentence_split import sentence_token_nltk
-        from posts.llama_POST import submit_request
-        sents = sentence_token_nltk(paragraph_text)
-        text = ""
-        for sent in sents:
-            result_list = submit_request(sent)
+        
+        if len(paragraph_text) < 25:
+            from tools.sentence_split import sentence_token_nltk
+            from posts.llama_POST import submit_request_spell_sent
+            sents = sentence_token_nltk(paragraph_text)
+            text = ""
+            for sent in sents:
+                result_list = submit_request_spell_sent(sent)
+                raw_answer = result_list[0]
+                answers = raw_answer.split("Answer:")
+                last_answer = answers[-1].strip()
+                real_answer = last_answer.replace("Answer:", "").strip()
+                text = text + real_answer + " "
+            return text
+        else:
+            from posts.llama_POST import submit_request_spell_paragraph
+            result_list = submit_request_spell_paragraph(paragraph_text)
             raw_answer = result_list[0]
             answers = raw_answer.split("Answer:")
             last_answer = answers[-1].strip()
             real_answer = last_answer.replace("Answer:", "").strip()
-            text = text + real_answer + " "
-        return text
+            return real_answer + " "
     
     def put_texts(self):
         img = Image.fromarray(self.draw_img)
